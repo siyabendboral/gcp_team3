@@ -19,7 +19,7 @@ data "google_billing_account" "acct" {
        open = true
    }
  
- resource "random_password" "password" {
+  resource "random_password" "password" {
        length = 16
        numeric = false
        special = false
