@@ -26,13 +26,16 @@ data "google_billing_account" "acct" {
        lower = true
        upper = false
    }
+  
    resource "google_project" "testproject" {
        name = "GCP_TEAM3"
        project_id = random_password.password.result
        billing_account = data.google_billing_account.acct.id
    }
+
 this part enables the services so we can provision the resources
 provisioner "local-exec" {
+    
        command = <<-EOT
            gcloud services enable compute.googleapis.com
            gcloud services enable dns.googleapis.com
@@ -41,10 +44,13 @@ provisioner "local-exec" {
        EOT
      }
    }
+
 Once created make sure you see your project ID in yellow color to make sure you are inside your project and can start provisioning resources. Exit the "setup_project_id" folder and make sure you are in the "AUGUST-GCP_TEAM3" then move to "backend_storage" folder with cd commands that way you wont lose your project id set in your command line and we run terraform init and apply commands to create a Cloud Storage Bucket for our tfstate files as a backend storage. Once it's done it will bring us an output of our bucketname which we copy and change the backend configuration file in our main folder(backend.tf).
+
 resource "random_id" "bucket_prefix" {
   byte_length = 8
  }
+
 resource "google_storage_bucket" "default" {
   name         = "${random_id.bucket_prefix.hex}-bucket-tfstate"
   force_destroy = false
@@ -54,28 +60,45 @@ resource "google_storage_bucket" "default" {
     enabled = true
   }
  }
+ 
  output bucket_name {
     value = google_storage_bucket.default.name
  }
+
 Exit the "backend_storage" folder and make sure you are in the "AUGUST-GCP_TEAM3" folder and do "terraform init". Make sure the project Id is set in the variables file to the correct project ID you just created and do "terraform apply -auto-approve" and it will build all resources needed for a fully functioning three tier application.
+
 VPC module
+
 In this project, we used global VPC, because it provided us managed and global virtual network for all of our Gcloud resources through subnets.
+
 Steps:
+
 Create vpc.tf file in folder with .gitignore and README.md files. Use google_compute_network resource to create the vpc
+
 resource "google_compute_network" "vpc-network-team3" {
    name = "var.vpc_name"
    auto_create_subnetworks = "true"
    routing_mode = "GLOBAL"
  }
-Open integrated terminal for this folder DO NOT FORGET to set the project first, otherwise your resources won't be created under your project in GCP Command for setting the project: gcloud config set project [PROJECT_ID]
+
+Open integrated terminal for this folder DO NOT FORGET to set the project first, otherwise your resources won't be created under your project in GCP Command for setting the project: 
+
+gcloud config set project [PROJECT_ID]
+
 Run terraform init command to initialize it
 Run terraform plan and see if you have any syntax error
 Run terraform apply to apply your changes
+
 Go to Google Console and check if your VPC is created under the name of "team3-vpc"
+
 Database
+
 Google Cloud SQL is managed database service and it allows us to run MySQL, PosgreSQL on GCloud.
+
 In Cloud Shell under your repo folder, create a folder DB and add terraform files in it - dbinstance.tf, variables.tf and provider.tf
+
 In dbinstance.tf add your resources to create your database instance. Use google_sql_database_instance resource for this:
+
  resource "google_sql_database_instance" "main" {
   name               = var.dbinstane_name
   database_version   = var.data_base_version
@@ -87,15 +110,19 @@ In dbinstance.tf add your resources to create your database instance. Use google
     tier = "db-f1-micro"
   }
 }
+
 resource "google_sql_user" "users" {
   name    = var.db_username
   instance = google_sql_database_instance.main.name
   host    = var.db_host
   password = var.db_password
-}resource "google_sql_database" "database" {
+
+}
+resource "google_sql_database" "database" {
   name    = var.db_name
   instance = google_sql_database_instance.main.name
 }
+
 In variables.tf add your variables to make your resources more dynamic
 Run terraform init, terraform apply to apply your changes Check Gcloud and make sure your resources are created under "team3-db-instance"
 In Google Console, you will be able to find your db instance's Public IP address and also Connection name.
