@@ -3,6 +3,7 @@ GOOGLE CLOUD PLATFORM 3 TIER APPLICATION
 Prerequisities:
 
 Login to your Google Cloud Console
+
 Create a Billing Account
 This part tells google to look for a billing account named "My Billing Account". So "My Billing Account" must be created first in the console for this script to run. If there is a different billing account you would like to use for this project, you can specify it and just change the name in the block of code.
 Go to GCP CLI and copyand paste project URL (ssh) from github into your workstation.
