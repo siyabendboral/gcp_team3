@@ -13,14 +13,22 @@ Go to GCP CLI and copyand paste project URL (ssh) from github into your workstat
 From your local execute git clone REPO_URL. Check the logs and make sure it's cloned properly. Go to "setup_project_id" folder and run "terraform init" and "terraform apply" to create a project with the billing account added using the following code:
 
 data "google_billing_account" "acct" {
+     
       display_name = "My Billing Account"
+       
         open = true
    }
+  
   resource "random_password" "password" {
+       
        length = 16
+      
        numeric = false
+      
        special = false
+      
        lower = true
+     
        upper = false
    }
   
