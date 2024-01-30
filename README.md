@@ -5,13 +5,20 @@ Prerequisities:
 Login to your Google Cloud Console
 
 Create a Billing Account
+
 This part tells google to look for a billing account named "My Billing Account". So "My Billing Account" must be created first in the console for this script to run. If there is a different billing account you would like to use for this project, you can specify it and just change the name in the block of code.
+
 Go to GCP CLI and copyand paste project URL (ssh) from github into your workstation.
+
 From your local execute git clone REPO_URL. Check the logs and make sure it's cloned properly. Go to "setup_project_id" folder and run "terraform init" and "terraform apply" to create a project with the billing account added using the following code:
+
 data "google_billing_account" "acct" {
+    
        display_name = "My Billing Account"
+      
        open = true
    }
+ 
  resource "random_password" "password" {
        length = 16
        numeric = false
